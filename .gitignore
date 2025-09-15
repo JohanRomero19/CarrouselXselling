@@ -1,2 +1,5 @@
-#Ignore environments
+# Ignore environments
 venv
+
+# Ignore outputs
+outputs
