@@ -1,2 +1,9 @@
-#Ignore environments
+# Ignore environments
 venv
+
+# Ignore outputs
+outputs
+
+# Ignore pycache
+
+**__pycache__**
