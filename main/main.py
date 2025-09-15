@@ -1,31 +1,28 @@
 from loguru import logger
 from commons.helper import (
-        data_reading,
-        normalize_json,
-        normalize_pays,
-        normalize_events,
-        aggregate_pays,
-        aggregate_events_wide,
-        funneling,
-        compute_metrics,
-    )
+    data_reading,
+    normalize_json,
+    normalize_pays,
+    normalize_events,
+    aggregate_pays,
+    aggregate_events_wide,
+    funneling,
+    build_prints_last_week_dataset,
+)
+
 
 def main():
     # data reading
     pays_df = data_reading("../landing/pays.csv", False)
-    logger.info(f'count of pays: {pays_df.count()}')
+    logger.info(f"count of pays: {pays_df.count()}")
     prints_df = normalize_json(
-        data_reading("../landing/prints.json", True),
-        'event_data',
-        ','
+        data_reading("../landing/prints.json", True), "event_data", ","
     )
-    logger.info(f'count of prints: {prints_df.count()}')
+    logger.info(f"count of prints: {prints_df.count()}")
     taps_df = normalize_json(
-        data_reading("../landing/taps.json", True),
-        'event_data',
-        ','
+        data_reading("../landing/taps.json", True), "event_data", ","
     )
-    logger.info(f'count of taps: {taps_df.count()}')
+    logger.info(f"count of taps: {taps_df.count()}")
 
     # normalizing dfs
 
@@ -49,25 +46,19 @@ def main():
 
     # merging dfs
 
-    merged_df = funneling(pays_aggregated, prints_aggregated, taps_aggregated, 'outer')
-    logger.info(f'count of merged: {merged_df.count()}')
+    merged_df = funneling(pays_aggregated, prints_aggregated, taps_aggregated, "outer")
+    logger.info(f"count of merged: {merged_df.count()}")
 
     # delete aggregated
 
     del pays_aggregated, prints_aggregated, taps_aggregated
 
-    # compute metrics
+    # build response dataset
 
-    metrics_df = compute_metrics(merged_df)
-    logger.info(f'count of metrics: {metrics_df.count()}')
+    result = build_prints_last_week_dataset(merged_df)
 
-    # delete funnel df
-
-    del merged_df
-
-    metrics_df.to_csv('../outputs/resultado.csv')
+    logger.info(f"count of merged: {result.count()}")
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
